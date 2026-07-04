@@ -1,4 +1,5 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
+import { ClerkProvider } from '@clerk/tanstack-react-start'
 
 import appCss from "@workspace/ui/globals.css?url"
 
@@ -39,7 +40,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <ClerkProvider>
+          {children}
+        </ClerkProvider>
         <Scripts />
       </body>
     </html>
