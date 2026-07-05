@@ -1,5 +1,6 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
-import { ClerkProvider } from '@clerk/tanstack-react-start'
+import { ClerkProvider } from "@clerk/tanstack-react-start"
+import { ThemeProvider } from "@/components/theme-provider"
 
 import appCss from "@workspace/ui/globals.css?url"
 
@@ -14,7 +15,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "TanStack Start Starter",
+        title: "Kindle",
       },
     ],
     links: [
@@ -39,10 +40,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
-        <ClerkProvider>
-          {children}
-        </ClerkProvider>
+      <body className="bg-[#EEF0EE] dark:bg-[#121212]">
+        <ThemeProvider defaultTheme="light" storageKey="theme">
+          <ClerkProvider>{children}</ClerkProvider>
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>

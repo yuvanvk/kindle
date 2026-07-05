@@ -1,7 +1,7 @@
-import { clerkMiddleware, getAuth } from '@clerk/hono';
 import { Hono } from 'hono'
 import { cors } from 'hono/cors';
-
+import github from "./routes/github";
+import { clerkMiddleware } from '@clerk/hono';
 
 const app = new Hono();
 
@@ -23,28 +23,14 @@ const protectedRoutes = new Hono();
  * protectedRoutes can only be accessed
  * if user is authenticated
 **/
-app.use("*", clerkMiddleware());
-
-
+protectedRoutes.use("*", clerkMiddleware());
 
 api.route("/", protectedRoutes);
+api.route("/github", github);
 
-app.get('/', (c) => {
-  const auth = getAuth(c)
-
-  if (!auth?.userId) {
-    return c.json({
-      message: 'You are not logged in.',
-    })
-  }
-
-  console.log(auth.userId);
-  
-
-  return c.json({
-    message: 'You are logged in!',
-    userId: auth.userId,
-  })
+app.get("/", (c) => {
+  return c.json({ message: "Iam Healthy!" });
 });
+
 
 export default app

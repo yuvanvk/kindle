@@ -1,6 +1,5 @@
 {
-  "name": "convex",
-  "module": "index.ts",
+  "name": "@workspace/convex",
   "type": "module",
   "private": true,
   "devDependencies": {
@@ -11,5 +10,8 @@
   },
   "dependencies": {
     "convex": "^1.42.1"
+  },
+  "exports": {
+    ".": "./convex/index.ts"
   }
 }
