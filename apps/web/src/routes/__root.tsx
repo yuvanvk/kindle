@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/tanstack-react-start"
 import { ThemeProvider } from "@/components/theme-provider"
 
 import appCss from "@workspace/ui/globals.css?url"
+import { Toaster } from "@workspace/ui/components/sonner";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -43,6 +44,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="bg-[#EEF0EE] dark:bg-[#121212]">
         <ThemeProvider defaultTheme="light" storageKey="theme">
           <ClerkProvider>{children}</ClerkProvider>
+          <Toaster />
         </ThemeProvider>
         <Scripts />
       </body>

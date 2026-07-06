@@ -9,4 +9,6 @@ export default defineSchema({
         accountType: v.string(),
         createdAt: v.number()
     })
+        .index("by_installation_id", ["installationId"])
+        .index("by_clerk_user_id", ["clerkUserId"]),
 })

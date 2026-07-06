@@ -4,12 +4,12 @@ import { cn } from "@workspace/ui/lib/utils"
 import { ChevronLeft, Loader } from "lucide-react"
 import { FaGithub } from "react-icons/fa"
 import { useTransition } from "react"
-import { buildGitHubAppInstallURl } from "@/lib/build-github-app-install"
 import { redirect } from "@tanstack/react-router"
+import { toast } from "sonner";
 
 export const Topbar = () => {
   const [isPending, startRedirectTransition] = useTransition();
-  const { userId, isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
 
   if (!isLoaded) {
     return
@@ -18,10 +18,19 @@ export const Topbar = () => {
     throw redirect({ to: "/" })
   }
 
-  const handleConnectGithubRedirect = () => {
+  const handleConnectGithubRedirect = async () => {
+    const response = await fetch("http://localhost:8787/api/v1/user/connect-github", { credentials: "include" });
+    const json = await response.json();
+
+    if(!response.ok) {
+      toast.error("Cannot Connect right now. Please try again later.")
+      return
+    }
+
+    const url = json.url
+    console.log(url);
     startRedirectTransition(() => {
-    const url = buildGitHubAppInstallURl({ clerkUserID: userId! })
-      window.location.href = url!
+      window.location.href = url
     });
   }
 
@@ -44,7 +53,7 @@ export const Topbar = () => {
           size={"sm"}
         >
           {isPending ? (
-            <Loader className="animate-spin"/>
+            <Loader className="animate-spin" />
           ) : (
             <>
               <FaGithub />

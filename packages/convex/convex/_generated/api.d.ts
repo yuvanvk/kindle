@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as githubInstallations from "../githubInstallations.js";
 import type * as index from "../index.js";
 
 import type {
@@ -17,6 +18,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  githubInstallations: typeof githubInstallations;
   index: typeof index;
 }>;
 
