@@ -1,26 +1,43 @@
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarHeader } from "@workspace/ui/components/sidebar"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@workspace/ui/components/sidebar"
 import { Logo } from "@/components/icons/logo"
 import { Button } from "@workspace/ui/components/button"
-import { Plus } from "lucide-react"
+import { Cog, Key, LogOut, Plus } from "lucide-react"
 import { cn } from "@workspace/ui/lib/utils"
+import { MdSpaceDashboard } from "react-icons/md"
+import { BsFillFolderFill } from "react-icons/bs"
+import { SignOutButton } from "@clerk/tanstack-react-start"
 
 export const AppSidebar = () => {
   return (
     <Sidebar variant="inset">
-      <SidebarHeader className="rounded-xl bg-linear-to-b from-neutral-950 to-neutral-900 bg-neutral-950! py-2 border ">
+      <SidebarHeader className="rounded-xl border bg-neutral-950! bg-linear-to-b from-neutral-950 to-neutral-900 py-2">
         <div className="flex items-center gap-2">
-          <div className="p-2.5 bg-[#2b2a2a] rounded-lg border">
+          <div className="rounded-lg border bg-[#2b2a2a] p-2.5">
             <Logo color="#fff" size={15} />
           </div>
           <div className="flex flex-col pt-1">
-            <h1 className="font-sans text-[14px] font-medium leading-4">
+            <h1 className="font-sans text-[14px] leading-4 font-medium">
               Yuvan Vignesh
             </h1>
-            <p className="text-[13px] font-light text-muted-foreground">Workspace</p>
+            <p className="text-[13px] font-light text-muted-foreground">
+              Workspace
+            </p>
           </div>
         </div>
         <Button
-          className={cn("bg-linear-to-br! from-neutral-100! to-neutral-400! border border-neutral-300 cursor-pointer")}
+          className={cn(
+            "cursor-pointer border border-neutral-300 bg-linear-to-br! from-neutral-100! to-neutral-400!"
+          )}
           size={"sm"}
         >
           <Plus />
@@ -28,19 +45,50 @@ export const AppSidebar = () => {
         </Button>
       </SidebarHeader>
 
-      <SidebarContent className="bg-linear-to-b from-neutral-950 to-neutral-900 bg-neutral-950!  border rounded-xl p-0 mt-1.5">
-          <SidebarGroup>
-            <SidebarGroupLabel className="capitalize font-light text-[12px]">
-              Main menu
-            </SidebarGroupLabel>
-          </SidebarGroup>
+      <SidebarContent className="mt-1.5 rounded-xl border bg-neutral-950! bg-linear-to-b from-neutral-950 to-neutral-900 p-0">
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[12px] font-light capitalize">
+            Main menu
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <MdSpaceDashboard />
+                Dashboard
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <BsFillFolderFill />
+                Projects
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <Cog />
+                Settings
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="mt-1.5 rounded-xl border bg-neutral-950! bg-linear-to-b from-neutral-950 to-neutral-900">
+        <Button size={"sm"} className="cursor-pointer rounded-lg border border-neutral-600 bg-linear-to-b! from-neutral-900 to-neutral-600 text-neutral-200 hover:bg-neutral-900/80">
+          <Key />
+          API Key
+        </Button>
+        <SignOutButton>
+          <Button
+            size={"sm"}
+            className="border-red-400 bg-red-500 text-neutral-100"
+          >
+            <LogOut />
+            Logout
+          </Button>
+        </SignOutButton>
+      </SidebarFooter>
     </Sidebar>
   )
 }
-
-/*
- * Build the Dasboard
- * Importing the nextjs repos
- * 
- **/

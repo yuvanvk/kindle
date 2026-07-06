@@ -8,6 +8,7 @@ export type Bindings = {
     STATE_SIGNING_SECRET: string;
     GITHUB_APP_ID: string;
     GITHUB_APP_PRIVATE_KEY: string;
+    FRONTEND_URL: string;
 }
 
 export type Variables = {

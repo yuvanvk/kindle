@@ -1,5 +1,4 @@
 import { api } from "./_generated/api";
 import { ConvexHttpClient } from "convex/browser";
-
-
-export { api, ConvexHttpClient }
+import { ConvexProvider } from "convex/react";
+export { api, ConvexHttpClient, ConvexProvider }

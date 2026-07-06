@@ -1,11 +1,14 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
+import appCss from "@workspace/ui/globals.css?url"
 import { ClerkProvider } from "@clerk/tanstack-react-start"
 import { ThemeProvider } from "@/components/theme-provider"
-
-import appCss from "@workspace/ui/globals.css?url"
+import { QueryClient } from "@tanstack/react-query";
+import { createRootRouteWithContext } from "@tanstack/react-router";
 import { Toaster } from "@workspace/ui/components/sonner";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   head: () => ({
     meta: [
       {
