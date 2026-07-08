@@ -1,5 +1,5 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
 import appCss from "@workspace/ui/globals.css?url"
+import { HeadContent, Scripts } from "@tanstack/react-router"
 import { ClerkProvider } from "@clerk/tanstack-react-start"
 import { ThemeProvider } from "@/components/theme-provider"
 import { QueryClient } from "@tanstack/react-query";

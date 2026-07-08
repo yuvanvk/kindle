@@ -15,9 +15,11 @@ import { Cog, Key, LogOut, Plus } from "lucide-react"
 import { cn } from "@workspace/ui/lib/utils"
 import { MdSpaceDashboard } from "react-icons/md"
 import { BsFillFolderFill } from "react-icons/bs"
-import { SignOutButton } from "@clerk/tanstack-react-start"
+import { SignOutButton, useUser } from "@clerk/tanstack-react-start"
 
 export const AppSidebar = () => {
+  const { user } = useUser()
+
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="rounded-xl border bg-neutral-950! bg-linear-to-b from-neutral-950 to-neutral-900 py-2">
@@ -27,7 +29,7 @@ export const AppSidebar = () => {
           </div>
           <div className="flex flex-col pt-1">
             <h1 className="font-sans text-[14px] leading-4 font-medium">
-              Yuvan Vignesh
+              {user?.username}
             </h1>
             <p className="text-[13px] font-light text-muted-foreground">
               Workspace
@@ -75,14 +77,17 @@ export const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="mt-1.5 rounded-xl border bg-neutral-950! bg-linear-to-b from-neutral-950 to-neutral-900">
-        <Button size={"sm"} className="cursor-pointer rounded-lg border border-neutral-600 bg-linear-to-b! from-neutral-900 to-neutral-600 text-neutral-200 hover:bg-neutral-900/80">
+        <Button
+          size={"sm"}
+          className="cursor-pointer rounded-lg border border-neutral-600 bg-linear-to-b! from-neutral-900 to-neutral-600 text-neutral-200 hover:bg-neutral-900/80"
+        >
           <Key />
           API Key
         </Button>
         <SignOutButton>
           <Button
             size={"sm"}
-            className="border-red-400 bg-red-500 text-neutral-100"
+            className="border-red-400 bg-red-500 hover:bg-red-500/90 text-neutral-100"
           >
             <LogOut />
             Logout

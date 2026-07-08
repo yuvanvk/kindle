@@ -22,6 +22,7 @@ const api = app.basePath("/api/v1");
 api.use("*", convexMiddleware);
 const protectedRoutes = new Hono();
 
+
 /*
  * protectedRoutes can only be accessed
  * if user is authenticated

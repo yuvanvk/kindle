@@ -28,9 +28,9 @@ export const upsert = mutation({
 
     return await ctx.db.insert("githubInstallations", args)
   },
-})
+});
 
-export const queryISGithubConnected = query({
+export const isGithubConnected = query({
   args: {
     clerkUserId: v.string(),
   },
@@ -44,4 +44,4 @@ export const queryISGithubConnected = query({
 
     return existing ? true : false
   },
-})
+});

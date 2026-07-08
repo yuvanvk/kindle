@@ -1,22 +1,22 @@
 import { Show, useAuth } from "@clerk/tanstack-react-start"
 import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
-import { ChevronLeft, Loader, Plus } from "lucide-react"
+import { ChevronLeft, Loader } from "lucide-react"
 import { FaGithub } from "react-icons/fa"
-import { MdLibraryAdd } from "react-icons/md"
 import { useTransition } from "react"
 import { redirect } from "@tanstack/react-router"
 import { toast } from "sonner"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { convexQuery } from "@convex-dev/react-query"
 import { api } from "@workspace/convex"
+import { ImportRepoModal } from "../modals/import-repo-modal"
 
 export const Topbar = () => {
   const [isPending, startRedirectTransition] = useTransition()
   const { isLoaded, isSignedIn, userId } = useAuth()
 
   const { data } = useSuspenseQuery(
-    convexQuery(api.githubInstallations.queryISGithubConnected, {
+    convexQuery(api.githubInstallations.isGithubConnected, {
       clerkUserId: userId,
     })
   )
@@ -41,7 +41,6 @@ export const Topbar = () => {
     }
 
     const url = json.url
-    console.log(url)
     startRedirectTransition(() => {
       window.location.href = url
     })
@@ -58,15 +57,7 @@ export const Topbar = () => {
 
       <div className="flex items-center gap-2">
         <Show when={"signed-in"}>
-          <Button
-            className={cn(
-              "cursor-pointer rounded-lg border border-neutral-600 bg-linear-to-b! from-neutral-900 to-neutral-600 text-neutral-200 hover:bg-neutral-900/80"
-            )}
-            size={"sm"}
-          >
-            <Plus />
-            New Project
-          </Button>
+          <ImportRepoModal />
         </Show>
         <Show when={"signed-in"}>
           <Button
