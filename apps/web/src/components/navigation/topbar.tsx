@@ -4,12 +4,22 @@ import { cn } from "@workspace/ui/lib/utils"
 import { ChevronLeft, Loader } from "lucide-react"
 import { FaGithub } from "react-icons/fa"
 import { useTransition } from "react"
-import { buildGitHubAppInstallURl } from "@/lib/build-github-app-install"
 import { redirect } from "@tanstack/react-router"
+import { toast } from "sonner"
+import { useSuspenseQuery } from "@tanstack/react-query"
+import { convexQuery } from "@convex-dev/react-query"
+import { api } from "@workspace/convex"
+import { ImportRepoModal } from "../modals/import-repo-modal"
 
 export const Topbar = () => {
-  const [isPending, startRedirectTransition] = useTransition();
-  const { userId, isLoaded, isSignedIn } = useAuth();
+  const [isPending, startRedirectTransition] = useTransition()
+  const { isLoaded, isSignedIn, userId } = useAuth()
+
+  const { data } = useSuspenseQuery(
+    convexQuery(api.githubInstallations.isGithubConnected, {
+      clerkUserId: userId,
+    })
+  )
 
   if (!isLoaded) {
     return
@@ -18,11 +28,22 @@ export const Topbar = () => {
     throw redirect({ to: "/" })
   }
 
-  const handleConnectGithubRedirect = () => {
+  const handleConnectGithubRedirect = async () => {
+    const response = await fetch(
+      "http://localhost:8787/api/v1/user/connect-github",
+      { credentials: "include" }
+    )
+    const json = await response.json()
+
+    if (!response.ok) {
+      toast.error("Cannot Connect right now. Please try again later.")
+      return
+    }
+
+    const url = json.url
     startRedirectTransition(() => {
-    const url = buildGitHubAppInstallURl({ clerkUserID: userId! })
-      window.location.href = url!
-    });
+      window.location.href = url
+    })
   }
 
   return (
@@ -34,25 +55,30 @@ export const Topbar = () => {
         <h1 className="text-[15px] font-medium tracking-tight">Dashboard</h1>
       </div>
 
-      <Show when={"signed-in"}>
-        <Button
-          onClick={handleConnectGithubRedirect}
-          disabled={isPending}
-          className={cn(
-            "cursor-pointer border border-neutral-300 bg-linear-to-br! from-neutral-100! to-neutral-400!"
-          )}
-          size={"sm"}
-        >
-          {isPending ? (
-            <Loader className="animate-spin"/>
-          ) : (
-            <>
-              <FaGithub />
-              Connect Github
-            </>
-          )}
-        </Button>
-      </Show>
+      <div className="flex items-center gap-2">
+        <Show when={"signed-in"}>
+          <ImportRepoModal />
+        </Show>
+        <Show when={"signed-in"}>
+          <Button
+            onClick={handleConnectGithubRedirect}
+            disabled={isPending}
+            className={cn(
+              "cursor-pointer rounded-lg border border-neutral-600 bg-linear-to-b! from-neutral-900 to-neutral-600 text-neutral-200 hover:bg-neutral-900/80"
+            )}
+            size={"sm"}
+          >
+            {isPending ? (
+              <Loader className="animate-spin" />
+            ) : (
+              <>
+                <FaGithub />
+                {data ? "Connected" : "Connect Github"}
+              </>
+            )}
+          </Button>
+        </Show>
+      </div>
     </div>
   )
 }

@@ -1,2 +1,9 @@
 CLERK_SECRET_KEY=<You-secret-key>
 CLERK_PUBLISHABLE_KEY=<Your-publishable-key>
+
+GITHUB_APP_CLIENT_ID=<your-github-app-client-id>
+GITHUB_APP_ID=<your-github-app-id>
+# PEM on one line; use \\n between header, body lines, and footer
+GITHUB_APP_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----"
+CONVEX_URL=<your-convex-url>
+STATE_SIGNING_SECRET=<your-state-signing-secret>

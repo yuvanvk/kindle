@@ -1,10 +1,14 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
+import appCss from "@workspace/ui/globals.css?url"
+import { HeadContent, Scripts } from "@tanstack/react-router"
 import { ClerkProvider } from "@clerk/tanstack-react-start"
 import { ThemeProvider } from "@/components/theme-provider"
+import { QueryClient } from "@tanstack/react-query";
+import { createRootRouteWithContext } from "@tanstack/react-router";
+import { Toaster } from "@workspace/ui/components/sonner";
 
-import appCss from "@workspace/ui/globals.css?url"
-
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   head: () => ({
     meta: [
       {
@@ -43,6 +47,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="bg-[#EEF0EE] dark:bg-[#121212]">
         <ThemeProvider defaultTheme="light" storageKey="theme">
           <ClerkProvider>{children}</ClerkProvider>
+          <Toaster />
         </ThemeProvider>
         <Scripts />
       </body>

@@ -1,9 +1,13 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors';
-import github from "./routes/github";
+import callbacks from "./routes/callbacks";
+import user from "./routes/user";
+import webhooks from "./routes/webhooks";
 import { clerkMiddleware } from '@clerk/hono';
+import { convexMiddleware } from "./middleware";
+import { Bindings, Variables } from './types';
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings, Variables: Variables }>();
 
 app.use(
   "*",
@@ -17,16 +21,20 @@ app.use(
 );
 
 const api = app.basePath("/api/v1");
+api.use("*", convexMiddleware);
 const protectedRoutes = new Hono();
+
 
 /*
  * protectedRoutes can only be accessed
  * if user is authenticated
 **/
 protectedRoutes.use("*", clerkMiddleware());
+protectedRoutes.route("/user", user);
 
+api.route("/webhooks", webhooks)
+api.route("/", callbacks);
 api.route("/", protectedRoutes);
-api.route("/github", github);
 
 app.get("/", (c) => {
   return c.json({ message: "Iam Healthy!" });
