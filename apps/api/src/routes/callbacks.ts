@@ -42,8 +42,9 @@ router.get("/github/callback", async (c) => {
         const accountLogin = "login" in account ? account.login : account.slug;
         const accountType = "login" in account ? account.type : "Organization";
 
-        await convex.mutation(api.githubInstallations.upsert, {
+        await convex.mutation(api.githubInstallations.saveGithubInstallation, {
             clerkUserId,
+            status: "active",
             installationId: installation_id,
             accountLogin,
             accountType,

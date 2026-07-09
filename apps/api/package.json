@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@clerk/hono": "^0.1.45",
+    "@octokit/webhooks": "^14.2.0",
     "@workspace/convex": "workspace:*",
     "hono": "^4.12.27",
     "jose": "^6.2.3",

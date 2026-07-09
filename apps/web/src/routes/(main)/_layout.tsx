@@ -11,7 +11,7 @@ const authStateFn = createServerFn({ method: "GET" }).handler(async () => {
 
   if (!isAuthenticated) {
     throw redirect({
-      to: "/signup"
+      to: "/"
     })
   }
   return { userId }

@@ -2,10 +2,12 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors';
 import callbacks from "./routes/callbacks";
 import user from "./routes/user";
+import webhooks from "./routes/webhooks";
 import { clerkMiddleware } from '@clerk/hono';
 import { convexMiddleware } from "./middleware";
+import { Bindings, Variables } from './types';
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings, Variables: Variables }>();
 
 app.use(
   "*",
@@ -30,6 +32,7 @@ const protectedRoutes = new Hono();
 protectedRoutes.use("*", clerkMiddleware());
 protectedRoutes.route("/user", user);
 
+api.route("/webhooks", webhooks)
 api.route("/", callbacks);
 api.route("/", protectedRoutes);
 

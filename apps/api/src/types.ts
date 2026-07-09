@@ -7,6 +7,7 @@ export type Bindings = {
     CLERK_SECRET_KEY: string;
     STATE_SIGNING_SECRET: string;
     GITHUB_APP_ID: string;
+    GITHUB_WEBHOOK_SECRET: string;
     GITHUB_APP_PRIVATE_KEY: string;
     FRONTEND_URL: string;
 }
