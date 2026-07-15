@@ -65,7 +65,7 @@ export const isGithubConnected = query({
       )
       .unique()
 
-    return existing ? true : false
+    return existing
   },
 });
 

@@ -10,16 +10,22 @@ import {
 import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
 import { Plus } from "lucide-react"
+import { useState } from "react"
 import { TbExternalLinkFilled } from "react-icons/tb"
 
 export const ImportRepoModal = () => {
-
-
+  const [repos, setRepos] = useState([]);
+  
+  const fetchRepos = async () => {
+    const response = await fetch("http://localhost:8787/api/v1/user/get-repos", { credentials: "include" });
+    const json = await response.json();
+    setRepos(json.repos);
+  }
   return (
     <Dialog>
       <DialogTrigger>
         <Button
-        
+          onClick={fetchRepos}
           className={cn(
             "cursor-pointer rounded-lg border border-neutral-600 bg-linear-to-b! from-neutral-900 to-neutral-600 text-neutral-200 hover:bg-neutral-900/80"
           )}

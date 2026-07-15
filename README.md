@@ -4,7 +4,6 @@
 4. Ships the changes
 5. Uploads them to github via PR
 6. This sandbox is done for after PR
-
 -----------------
 
 1. Github App install and if user disconnects what should happen decide

@@ -3,17 +3,20 @@ import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 import { ChevronLeft, Loader } from "lucide-react"
 import { FaGithub } from "react-icons/fa"
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { redirect } from "@tanstack/react-router"
 import { toast } from "sonner"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { convexQuery } from "@convex-dev/react-query"
 import { api } from "@workspace/convex"
 import { ImportRepoModal } from "../modals/import-repo-modal"
+import { useTheme } from "../theme-provider"
 
 export const Topbar = () => {
   const [isPending, startRedirectTransition] = useTransition()
-  const { isLoaded, isSignedIn, userId } = useAuth()
+  const { isLoaded, isSignedIn, userId } = useAuth();
+
+  const { setTheme } = useTheme();
 
   const { data } = useSuspenseQuery(
     convexQuery(api.githubInstallations.isGithubConnected, {
@@ -27,6 +30,8 @@ export const Topbar = () => {
   if (!isSignedIn) {
     throw redirect({ to: "/" })
   }
+
+
 
   const handleConnectGithubRedirect = async () => {
     const response = await fetch(
@@ -56,6 +61,11 @@ export const Topbar = () => {
       </div>
 
       <div className="flex items-center gap-2">
+        <Button
+          onClick={() => setTheme("dark")}
+        >
+          Toggle
+        </Button>
         <Show when={"signed-in"}>
           <ImportRepoModal />
         </Show>

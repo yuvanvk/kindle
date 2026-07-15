@@ -24,7 +24,7 @@ router.post("/github", async (c) => {
         const payload = await c.req.json();
         const event = c.req.header("X-GitHub-Event");
 
-         if (event === "installation") {
+        if (event === "installation") {
             const { action, installation } = payload
 
             await convex.mutation(api.githubInstallations.updateGithubInstallation, {
@@ -32,9 +32,9 @@ router.post("/github", async (c) => {
                 status: action === "created" ? "active" : action
             })
             return c.json({ message: "Updated installation status" }, 200)
-         }
+        }
 
-         return c.json({ message: "OK" })
+        return c.json({ message: "OK" })
 
     } catch (error) {
         console.log("ERROR_GITHUB_WEBHOOK -> ", error);
