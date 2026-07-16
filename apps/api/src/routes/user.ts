@@ -35,30 +35,50 @@ router.get("/connect-github", async (c) => {
 // maybe cache it because it doesnot change often
 router.get("/get-repos", async (c) => {
   try {
-    const user = getAuth(c);
-    const convex = c.get("convex");
-    const clerkUserId = user.userId;
+    const user = getAuth(c)
+    const convex = c.get("convex")
+    const clerkUserId = user.userId
 
-    const installation = await convex.query(api.githubInstallations.isGithubConnected, {
-        clerkUserId
-    });
+    const installation = await convex.query(
+      api.githubInstallations.isGithubConnected,
+      {
+        clerkUserId,
+      }
+    )
 
-    if(!installation) {
-        return c.json({ message: "Connect Github to import repos"}, 404)
+    if (!installation) {
+      return c.json({ message: "Connect Github to import repos" }, 404)
     }
 
     const app = new App({
-        appId: c.env.GITHUB_APP_ID,
-        privateKey: c.env.GITHUB_APP_PRIVATE_KEY
-    });
-    const installationOctokit = await app.getInstallationOctokit(installation.installationId);
-    const { data: repos } = await installationOctokit.request("GET /installation/repositories");
+      appId: c.env.GITHUB_APP_ID,
+      privateKey: c.env.GITHUB_APP_PRIVATE_KEY,
+    })
+    const installationOctokit = await app.getInstallationOctokit(
+      installation.installationId
+    )
+    const { data: repos } = await installationOctokit.request(
+      "GET /installation/repositories",
+    )
 
-    console.log("GET_REPOS -> ",repos);
-    
-    return c.json({ message: "Successfully retrived repos", data: { repos }});
+    if (repos.total_count === 0) {
+      return c.json({ message: "No repos found", data: { repos: [] } }, 404)
+    }
 
+    return c.json({
+      message: "Successfully retrived repos",
+      data: {
+        repos: repos.repositories.map((repo) => ({
+          id: repo.id,
+          fullName: repo.full_name,
+          cloneUrl: repo.clone_url,
+          private: repo.private,
+          isFork: repo.fork,
+          defaultBranch: repo.default_branch,
 
+        })),
+      },
+    })
   } catch (error) {
     console.log("GET_REPOS", error)
     return c.json({ message: "Something went wrong" }, 500)

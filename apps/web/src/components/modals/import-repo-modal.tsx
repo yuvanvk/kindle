@@ -1,4 +1,5 @@
-import { Button } from "@workspace/ui/components/button"
+import { useMemo, useState, type ChangeEvent } from "react"
+import { Plus } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -7,20 +8,46 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@workspace/ui/components/dialog"
-import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
-import { Plus } from "lucide-react"
-import { useState } from "react"
+import { Input } from "@workspace/ui/components/input"
 import { TbExternalLinkFilled } from "react-icons/tb"
+import { Button } from "@workspace/ui/components/button"
+import { Skeleton } from "@workspace/ui/components/skeleton"
+
+interface RepoCardProps {
+  id: string
+  fullName: string
+  cloneUrl: string
+  private: string
+  isFork: string
+  defaultBranch: string
+}
 
 export const ImportRepoModal = () => {
-  const [repos, setRepos] = useState([]);
-  
+  const [search, setSearch] = useState<string>("")
+  const [repos, setRepos] = useState<RepoCardProps[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const reposToShow = useMemo(
+    () => repos.filter((repo) => repo.fullName.includes(search)),
+    [repos, search]
+  )
+
   const fetchRepos = async () => {
-    const response = await fetch("http://localhost:8787/api/v1/user/get-repos", { credentials: "include" });
-    const json = await response.json();
-    setRepos(json.repos);
+    setLoading(true)
+    const response = await fetch(
+      "http://localhost:8787/api/v1/user/get-repos",
+      { credentials: "include" }
+    )
+    const json = await response.json()
+    setRepos(json.data.repos)
+    setLoading(false)
   }
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+  }
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -45,13 +72,29 @@ export const ImportRepoModal = () => {
 
         <form>
           <div className="flex items-center gap-2">
-            <Input placeholder="Search" />
+            <Input placeholder="Search" onChange={handleChange} />
             <Button>Search</Button>
           </div>
-          <div className="mt-5 flex flex-col divide-y overflow-hidden overflow-y-scroll rounded-xl border shadow-xl">
-            {Array.from({ length: 5 }).map((_, idx) => (
-              <RepoCard repoName="Sparkles" key={idx} />
-            ))}
+          <div className="mt-5 flex h-64 flex-col divide-y overflow-x-hidden overflow-y-scroll rounded-xl border shadow-xl">
+            {!loading ? (
+              reposToShow.map((repo) => (
+                <RepoCard
+                  fullName={repo.fullName}
+                  private={repo.private}
+                  id={repo.id}
+                  isFork={repo.isFork}
+                  defaultBranch={repo.defaultBranch}
+                  cloneUrl={repo.cloneUrl}
+                  key={repo.id}
+                />
+              ))
+            ) : (
+              <>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <RepoCardSkeleton key={i} />
+                ))}
+              </>
+            )}
           </div>
         </form>
       </DialogContent>
@@ -59,11 +102,7 @@ export const ImportRepoModal = () => {
   )
 }
 
-interface RepoCardProps {
-  repoName: string
-}
-
-export const RepoCard = ({ repoName }: RepoCardProps) => {
+export const RepoCard = ({ fullName }: RepoCardProps) => {
   return (
     <div
       className={cn(
@@ -72,7 +111,7 @@ export const RepoCard = ({ repoName }: RepoCardProps) => {
     >
       <div className="flex items-center gap-2">
         <div className="h-4 w-4 rounded-full bg-neutral-200" />
-        <div className="text-sm font-light">{repoName}</div>
+        <div className="text-sm font-light">{fullName}</div>
       </div>
 
       <div className="flex items-center gap-1">
@@ -80,6 +119,22 @@ export const RepoCard = ({ repoName }: RepoCardProps) => {
         <Button size={"sm"} variant={"ghost"} className="p-0">
           <TbExternalLinkFilled />
         </Button>
+      </div>
+    </div>
+  )
+}
+
+export const RepoCardSkeleton = () => {
+  return (
+    <div className="flex items-center justify-between bg-[#121212] px-2.5 py-1.5">
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-4 w-4 rounded-full" />
+        <Skeleton className="h-4 w-32" />
+      </div>
+
+      <div className="flex items-center gap-1">
+        <Skeleton className="h-3 w-10" />
+        <Skeleton className="h-6 w-6 rounded-md" />
       </div>
     </div>
   )
