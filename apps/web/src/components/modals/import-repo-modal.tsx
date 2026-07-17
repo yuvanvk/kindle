@@ -24,9 +24,18 @@ interface RepoCardProps {
 }
 
 export const ImportRepoModal = () => {
-  const [search, setSearch] = useState<string>("")
-  const [repos, setRepos] = useState<RepoCardProps[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
+  const [search, setSearch] = useState<string>("");
+  const [repos, setRepos] = useState<RepoCardProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [repoDetails, setRepoDetails] = useState({
+    repoDetails: {
+      
+    },
+    environmentVariables: {
+
+    }
+  });
 
   const reposToShow = useMemo(
     () => repos.filter((repo) => repo.fullName.includes(search)),
@@ -73,7 +82,13 @@ export const ImportRepoModal = () => {
         <form>
           <div className="flex items-center gap-2">
             <Input placeholder="Search" onChange={handleChange} />
-            <Button>Search</Button>
+            <Button
+              className={cn(
+                "cursor-pointer border border-neutral-300 bg-linear-to-br! from-neutral-100! to-neutral-400!"
+              )}
+            >
+              Search
+            </Button>
           </div>
           <div className="mt-5 flex h-64 flex-col divide-y overflow-x-hidden overflow-y-scroll rounded-xl border shadow-xl">
             {!loading ? (
@@ -90,7 +105,7 @@ export const ImportRepoModal = () => {
               ))
             ) : (
               <>
-                {Array.from({ length: 8 }).map((_, i) => (
+                {Array.from({ length: 7 }).map((_, i) => (
                   <RepoCardSkeleton key={i} />
                 ))}
               </>

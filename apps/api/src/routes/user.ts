@@ -1,10 +1,11 @@
 import { Hono } from "hono"
-import { Bindings, Variables } from "../types"
+import { App } from "octokit"
 import { getAuth } from "@clerk/hono"
 import { SignJWT } from "jose"
 import { JOSEError } from "jose/errors"
 import { api } from "@workspace/convex"
-import { App } from "octokit"
+import { Bindings, Variables } from "../types"
+import { createProject } from "@workspace/types"
 
 const router = new Hono<{ Bindings: Bindings; Variables: Variables }>()
 
@@ -75,7 +76,6 @@ router.get("/get-repos", async (c) => {
           private: repo.private,
           isFork: repo.fork,
           defaultBranch: repo.default_branch,
-
         })),
       },
     })
@@ -83,6 +83,23 @@ router.get("/get-repos", async (c) => {
     console.log("GET_REPOS", error)
     return c.json({ message: "Something went wrong" }, 500)
   }
-})
+});
+
+
+router.post("/create-project", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { success } = createProject.safeParse(body)
+
+    if (!success) {
+      return c.json({ message: "Invalid Inputs"}, 401)
+    }
+
+    
+
+  } catch (error) {
+    
+  }
+});
 
 export default router

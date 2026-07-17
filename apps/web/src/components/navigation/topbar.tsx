@@ -61,11 +61,11 @@ export const Topbar = () => {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button
+        {/* <Button
           onClick={() => setTheme("dark")}
         >
           Toggle
-        </Button>
+        </Button> */}
         <Show when={"signed-in"}>
           <ImportRepoModal />
         </Show>
