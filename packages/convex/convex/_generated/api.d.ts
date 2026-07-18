@@ -10,6 +10,7 @@
 
 import type * as githubInstallations from "../githubInstallations.js";
 import type * as index from "../index.js";
+import type * as projects from "../projects.js";
 
 import type {
   ApiFromModules,
@@ -20,6 +21,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   githubInstallations: typeof githubInstallations;
   index: typeof index;
+  projects: typeof projects;
 }>;
 
 /**

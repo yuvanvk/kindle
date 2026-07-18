@@ -10,6 +10,7 @@ export type Bindings = {
     GITHUB_WEBHOOK_SECRET: string;
     GITHUB_APP_PRIVATE_KEY: string;
     FRONTEND_URL: string;
+    ENCRYPTION_MASTER_KEY: string;
 }
 
 export type Variables = {

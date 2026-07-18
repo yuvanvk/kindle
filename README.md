@@ -23,3 +23,14 @@ Reverting to previous changes so that user has control on code
 3. Import Repo -> to Create Project 
 4. From Project -> Create tasks
 5. Each task when uploaded thats end it.
+
+
+
+
+<!-- TASKS -->
+<!-- 
+    1. CREATE PROJECT API
+    2. ENV PASTE FEATURE
+    3. MODAL OPEN & CLOSE
+    4. SHOWING THE PROJECT CREATED IN DASHBOARD
+ -->

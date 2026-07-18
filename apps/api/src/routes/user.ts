@@ -5,7 +5,8 @@ import { SignJWT } from "jose"
 import { JOSEError } from "jose/errors"
 import { api } from "@workspace/convex"
 import { Bindings, Variables } from "../types"
-import { createProject } from "@workspace/types"
+import { createProject, CreateProjectType } from "@workspace/types"
+import { encryptEnvVars } from "../lib/encrypt-env-vars"
 
 const router = new Hono<{ Bindings: Bindings; Variables: Variables }>()
 
@@ -72,10 +73,7 @@ router.get("/get-repos", async (c) => {
         repos: repos.repositories.map((repo) => ({
           id: repo.id,
           fullName: repo.full_name,
-          cloneUrl: repo.clone_url,
-          private: repo.private,
           isFork: repo.fork,
-          defaultBranch: repo.default_branch,
         })),
       },
     })
@@ -88,17 +86,61 @@ router.get("/get-repos", async (c) => {
 
 router.post("/create-project", async (c) => {
   try {
-    const body = await c.req.json();
-    const { success } = createProject.safeParse(body)
+    const user = getAuth(c);
+    const clerkUserId = user.userId;
+    const body: CreateProjectType = await c.req.json();
+
+    const { success, data } = createProject.safeParse(body)
+    const convex = c.get("convex");
 
     if (!success) {
-      return c.json({ message: "Invalid Inputs"}, 401)
+      return c.json({ message: "Invalid Inputs" }, 400)
     }
 
-    
+    const repoMeta = data.repoDetails
+    // get repo details having the repoId, isFork
+    const installation = await convex.query(api.githubInstallations.isGithubConnected, {
+      clerkUserId,
+    })
 
-  } catch (error) {
+    if (!installation) {
+      return c.json({ message: "Connect Github first" }, 404)
+    }
+
+
+    const app = new App({
+      appId: c.env.GITHUB_APP_ID,
+      privateKey: c.env.GITHUB_APP_PRIVATE_KEY,
+    })
+
+    const installationOctokit = await app.getInstallationOctokit(installation.installationId)
+    const { data: repos } = await installationOctokit.request("GET /installation/repositories")
+
+    const repo = repos.repositories.find((r) => r.id === data.repoDetails.repoId)
+
+    if (!repo) {
+      return c.json({ message: "Repo not found or access denied" }, 403)
+    }
+
+    const env_vars_json: { [key: string]: string } = Object
+      .fromEntries(data.environmentVariables
+        .map(({ key, value }) => [key, value]))
     
+    // encrypt the env vars
+    const encryptedEnvVars = await encryptEnvVars(env_vars_json, c.env.ENCRYPTION_MASTER_KEY)
+    const project = await convex.mutation(api.projects.create, {
+      clerkUserId,
+      projectId: String(repo.id),
+      projectName: repo.full_name,
+      isFork: repo.fork,
+      ...encryptedEnvVars,
+      updatedAt: Date.now(),
+    });
+
+    return c.json({ message: "Project created", data: { project } }, 201)
+  } catch (error) {
+    console.log("CREATE_PROJECT", error)
+    return c.json({ message: "Internal Server Error" }, 500)
   }
 });
 

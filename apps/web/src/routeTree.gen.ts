@@ -10,18 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as mainLayoutRouteImport } from './routes/(main)/_layout'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
-import { Route as mainLayoutSettingsRouteImport } from './routes/(main)/_layout.settings'
+import { Route as mainLayoutRouteImport } from './routes/(main)/_layout'
 import { Route as mainLayoutDashboardRouteImport } from './routes/(main)/_layout.dashboard'
+import { Route as mainLayoutSettingsRouteImport } from './routes/(main)/_layout.settings'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const mainLayoutRoute = mainLayoutRouteImport.update({
-  id: '/(main)/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authSignupRoute = authSignupRouteImport.update({
@@ -29,14 +25,18 @@ const authSignupRoute = authSignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const mainLayoutSettingsRoute = mainLayoutSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => mainLayoutRoute,
+const mainLayoutRoute = mainLayoutRouteImport.update({
+  id: '/(main)/_layout',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const mainLayoutDashboardRoute = mainLayoutDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => mainLayoutRoute,
+} as any)
+const mainLayoutSettingsRoute = mainLayoutSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => mainLayoutRoute,
 } as any)
 
@@ -89,13 +89,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(main)/_layout': {
-      id: '/(main)/_layout'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof mainLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(auth)/signup': {
       id: '/(auth)/signup'
       path: '/signup'
@@ -103,18 +96,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(main)/_layout/settings': {
-      id: '/(main)/_layout/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof mainLayoutSettingsRouteImport
-      parentRoute: typeof mainLayoutRoute
+    '/(main)/_layout': {
+      id: '/(main)/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof mainLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(main)/_layout/dashboard': {
       id: '/(main)/_layout/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof mainLayoutDashboardRouteImport
+      parentRoute: typeof mainLayoutRoute
+    }
+    '/(main)/_layout/settings': {
+      id: '/(main)/_layout/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof mainLayoutSettingsRouteImport
       parentRoute: typeof mainLayoutRoute
     }
   }
