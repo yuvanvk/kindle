@@ -1,4 +1,4 @@
-import { useMemo, useState, type ChangeEvent } from "react"
+import { useEffect, useMemo, useState, type ChangeEvent } from "react"
 import { Download, Plus } from "lucide-react"
 import {
   Dialog,
@@ -36,7 +36,7 @@ export const ImportRepoModal = () => {
   const [search, setSearch] = useState<string>("")
   const [repos, setRepos] = useState<RepoCardProps[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false)
 
   const [repoDetails, setRepoDetails] = useState<RepoDetails>({
     info: {
@@ -123,8 +123,13 @@ export const ImportRepoModal = () => {
     }))
   }
 
-  const handleSumbit = () => {
-    
+  const handleSumbit = async () => {
+    const response = await fetch("http://localhost:8787/api/v1/user/create-project", {
+      body: JSON.stringify({
+        
+      }),
+      credentials: "include"
+    },)
   }
 
   const handleReset = () => {
@@ -135,13 +140,22 @@ export const ImportRepoModal = () => {
         cloneUrl: "",
         isPrivate: "",
         isFork: "",
-        defaultBranch: ""
+        defaultBranch: "",
       },
-      environmentVariables: [{ key: "", value: "" }]
+      environmentVariables: [{ key: "", value: "" }],
     })
     setOpen(false)
-
   }
+
+  useEffect(() => {
+    const handleEnvPaste = (e: KeyboardEvent) => {
+      // if (e.ctrlKey)
+    }
+    document.addEventListener("keydown", handleEnvPaste)
+    
+    return () => document.removeEventListener("keydown", handleEnvPaste)
+  }, [])
+
 
   return (
     <Dialog open={open}>
@@ -196,9 +210,7 @@ export const ImportRepoModal = () => {
                     Search
                   </Button>
                 </div>
-                <motion.div
-                
-                className="mt-5 flex h-64 flex-col divide-y overflow-x-hidden overflow-y-scroll rounded-xl border shadow-xl">
+                <motion.div className="mt-5 flex h-64 flex-col divide-y overflow-x-hidden overflow-y-scroll rounded-xl border shadow-xl">
                   {!loading ? (
                     reposToShow.map((repo) => (
                       <RepoCard
