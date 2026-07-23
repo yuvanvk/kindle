@@ -8,7 +8,7 @@ import { Bindings, Variables } from "../types"
 import { createProject, CreateProjectType } from "@workspace/types"
 import { encryptEnvVars } from "../lib/encrypt-env-vars"
 
-const router = new Hono<{ Bindings: Bindings; Variables: Variables }>()
+const router = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 router.get("/connect-github", async (c) => {
   try {
@@ -89,6 +89,7 @@ router.post("/create-project", async (c) => {
     const user = getAuth(c);
     const clerkUserId = user.userId;
     const body: CreateProjectType = await c.req.json();
+    
 
     const { success, data } = createProject.safeParse(body)
     const convex = c.get("convex");
@@ -130,8 +131,9 @@ router.post("/create-project", async (c) => {
     const encryptedEnvVars = await encryptEnvVars(env_vars_json, c.env.ENCRYPTION_MASTER_KEY)
     const project = await convex.mutation(api.projects.create, {
       clerkUserId,
-      projectId: String(repo.id),
+      projectId: repo.id,
       projectName: repo.full_name,
+      cloneUrl: repo.clone_url,
       isFork: repo.fork,
       ...encryptedEnvVars,
       updatedAt: Date.now(),
@@ -140,7 +142,7 @@ router.post("/create-project", async (c) => {
     return c.json({ message: "Project created", data: { project } }, 201)
   } catch (error) {
     console.log("CREATE_PROJECT", error)
-    return c.json({ message: "Internal Server Error" }, 500)
+    return c.json({ message: "Something went wrong" }, 500)
   }
 });
 

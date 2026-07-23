@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ChangeEvent } from "react"
+import { useEffect, useMemo, useState, type ChangeEvent, type SubmitEvent } from "react"
 import { Download, Plus } from "lucide-react"
 import {
   Dialog,
@@ -14,9 +14,10 @@ import { Button } from "@workspace/ui/components/button"
 import { AnimatePresence, motion } from "motion/react"
 import { RepoCard } from "../cards/repo-card"
 import { RepoCardSkeleton } from "../skeletons/repo-card.skeleton"
+import { toast } from "sonner"
 
 export interface RepoCardProps {
-  projectId: string
+  id: string
   fullName: string
   cloneUrl: string
   isPrivate: string
@@ -40,7 +41,7 @@ export const ImportRepoModal = () => {
 
   const [repoDetails, setRepoDetails] = useState<RepoDetails>({
     info: {
-      projectId: "",
+      id: "",
       fullName: "",
       cloneUrl: "",
       isPrivate: "",
@@ -56,7 +57,8 @@ export const ImportRepoModal = () => {
     () => repos.filter((repo) => repo.fullName.includes(search)),
     [repos, search]
   )
-
+  console.log(repos);
+  
   const fetchRepos = async () => {
     setLoading(true)
     setOpen(true)
@@ -74,17 +76,18 @@ export const ImportRepoModal = () => {
   }
 
   const handleRepoSelect = ({
-    projectId,
+    id,
     cloneUrl,
     defaultBranch,
     isFork,
     fullName,
     isPrivate,
   }: Info) => {
+    console.log(id);
     setRepoDetails({
       ...repoDetails,
       info: {
-        projectId,
+        id,
         cloneUrl,
         defaultBranch,
         isFork,
@@ -123,19 +126,33 @@ export const ImportRepoModal = () => {
     }))
   }
 
-  const handleSumbit = async () => {
+  const handleSumbit = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
     const response = await fetch("http://localhost:8787/api/v1/user/create-project", {
+      method: "POST",
       body: JSON.stringify({
-        
+        repoDetails: {
+          repoId: parseInt(repoDetails.info.id),
+          isFork: repoDetails.info.isFork
+        },
+        environmentVariables: repoDetails.environmentVariables
       }),
       credentials: "include"
-    },)
+    });
+    const json = await response.json();
+    if (!response.ok) {
+      toast.error(json.message)
+      return
+    }
+
+    toast.success(json.message)
   }
 
   const handleReset = () => {
     setRepoDetails({
       info: {
-        projectId: "",
+        id: "",
         fullName: "",
         cloneUrl: "",
         isPrivate: "",
@@ -145,6 +162,7 @@ export const ImportRepoModal = () => {
       environmentVariables: [{ key: "", value: "" }],
     })
     setOpen(false)
+    setStep("select-repo")
   }
 
   useEffect(() => {
@@ -186,7 +204,7 @@ export const ImportRepoModal = () => {
           </DialogDescription>
         </DialogHeader>
 
-        <form onReset={handleReset} onSubmit={handleSumbit}>
+        <form onReset={handleReset} onSubmit={(e) => handleSumbit(e)}>
           <AnimatePresence>
             {step === "select-repo" ? (
               <motion.div
@@ -216,11 +234,11 @@ export const ImportRepoModal = () => {
                       <RepoCard
                         fullName={repo.fullName}
                         isPrivate={repo.isPrivate}
-                        projectId={repo.projectId}
+                        id={repo.id}
                         isFork={repo.isFork}
                         defaultBranch={repo.defaultBranch}
                         cloneUrl={repo.cloneUrl}
-                        key={repo.projectId}
+                        key={repo.id}
                         onClick={handleRepoSelect}
                       />
                     ))

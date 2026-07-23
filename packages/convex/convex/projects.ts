@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
 
-export const createProject = mutation({
+export const create = mutation({
     args: {
         clerkUserId: v.string(),
         projectId: v.number(),
@@ -15,6 +15,6 @@ export const createProject = mutation({
         updatedAt: v.number()
     },
     handler: async (ctx, args) => {
-        
+        return ctx.db.insert("projects", args)
     }
 })

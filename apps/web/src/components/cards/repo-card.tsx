@@ -4,7 +4,7 @@ import { TbExternalLinkFilled } from "react-icons/tb"
 import { cn } from "@workspace/ui/lib/utils"
 
 export const RepoCard = ({
-    projectId,
+    id,
     cloneUrl,
     defaultBranch,
     isFork,
@@ -16,7 +16,7 @@ export const RepoCard = ({
       <div
         onClick={() =>
           onClick({
-            projectId,
+            id,
             cloneUrl,
             defaultBranch,
             isFork,
